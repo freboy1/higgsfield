@@ -2,3 +2,6 @@ __pycache__
 myenv
 .env
 idk.py
+output.txt
+generated.txt
+test.py
