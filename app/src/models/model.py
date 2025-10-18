@@ -12,12 +12,10 @@ class ItemResult(BaseModel):
     id: str
     url: Optional[str] = None
 
-
 class GenerateImageResponse(BaseModel):
     status: int
     result: List[ItemResult]
 
-<<<<<<< HEAD
 # Lecture Presentation Models
 class LectureTopicRequest(BaseModel):
     topic: str
@@ -48,8 +46,3 @@ class QwenRequest(BaseModel):
 class TextAndAvatarGeneration(BaseModel):
     text: str
     avatar: str
-=======
-class TextAndAvatarGeneration(BaseModel):
-    text: str
-    avatar: str
->>>>>>> parent of fc24065 (merge)
