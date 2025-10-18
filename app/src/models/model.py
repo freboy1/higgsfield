@@ -42,10 +42,7 @@ class QwenRequest(BaseModel):
     model: str = "qwen3-max-preview"
     messages: List[dict]
     stream: bool = False
-<<<<<<< Updated upstream
 
 class TextAndAvatarGeneration(BaseModel):
     text: str
     avatar: str
-=======
->>>>>>> Stashed changes
