@@ -64,10 +64,8 @@ def check_for_generated(job_set_id):
                     return min_info["url"]
     return False
 
-
-@router.post("/generate-image", response_model=GenerateImageResponse)
-def generate_images(prompt: TextForGenerationPrompt):
-    prompts = divide_prompt(prompt.text)
+def get_images(text):
+    prompts = divide_prompt(text)
     imagesIdsAndUrls: List[dict] = []
     print(prompts)
     for prompt_text in prompts:
@@ -91,6 +89,12 @@ def generate_images(prompt: TextForGenerationPrompt):
         time.sleep(5)
     print(imagesIdsAndUrls)
     
+    return imagesIdsAndUrls
+
+
+@router.post("/generate-image", response_model=GenerateImageResponse)
+def generate_images(prompt: TextForGenerationPrompt):
+    imagesIdsAndUrls = get_images(prompt.text)
     return {"status": 1, "result": imagesIdsAndUrls}
 
 
