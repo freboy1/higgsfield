@@ -16,3 +16,7 @@ class ItemResult(BaseModel):
 class GenerateImageResponse(BaseModel):
     status: int
     result: List[ItemResult]
+
+class TextAndAvatarGeneration(BaseModel):
+    text: str
+    avatar: str
