@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from app.routes.text_route import router as api_router
 from app.routes.image_route import router as image_router
 from app.routes.lecture_route import router as lecture_router
+from app.routes.video_route import router as video_router
 from dotenv import load_dotenv
 import os
 
@@ -45,3 +46,5 @@ def root():
 app.include_router(api_router)
 app.include_router(image_router)
 app.include_router(lecture_router)
+
+app.include_router(video_router)

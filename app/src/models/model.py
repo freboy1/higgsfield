@@ -40,6 +40,11 @@ class LectureResponse(BaseModel):
 class TextForGenerationPrompt(BaseModel):
     text: str
 
+class PromptAndImageRequest(BaseModel):
+    text: str
+    avatar: str
+
+
 class GeneratedTextResponse(BaseModel):
     status: int
     text: str
@@ -55,3 +60,11 @@ class GenerateImageResponse(BaseModel):
 class TextAndAvatarGeneration(BaseModel):
     text: str
     avatar: str
+
+class Slide(BaseModel):
+    slide_number: int
+    title: str
+    content: str
+    image_prompt: Optional[str] = None
+    slide_type: str
+    script: Optional[str] = None
