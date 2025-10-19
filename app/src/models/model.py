@@ -1,6 +1,41 @@
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List, Optional, Dict
 
+# Request Models
+class AddOnsConfig(BaseModel):
+    code_examples: bool = False
+    visuals: bool = False
+    exercises: bool = False
+    qa_section: bool = False
+
+class LectureTopicRequest(BaseModel):
+    topic: str
+    duration_minutes: Optional[int] = 10
+    difficulty_level: Optional[str] = "beginner"  # beginner, intermediate, advanced
+    target_audience: Optional[str] = "general"
+    tone: Optional[str] = "friendly"  # friendly, formal, exam, story
+    add_ons: Optional[AddOnsConfig] = AddOnsConfig()
+
+# Response Models
+class SlideInstruction(BaseModel):
+    slide_number: int
+    title: str
+    content: str
+    image_prompt: str
+    slide_type: str  # title, content, conclusion, qa
+    script: str
+    code_example: Optional[str] = None
+    exercise: Optional[str] = None
+
+class LectureResponse(BaseModel):
+    status: int
+    topic: str
+    duration_minutes: int
+    tone: str
+    slides: List[SlideInstruction]
+    total_slides: int
+
+# Existing models
 class TextForGenerationPrompt(BaseModel):
     text: str
 
@@ -15,33 +50,6 @@ class ItemResult(BaseModel):
 class GenerateImageResponse(BaseModel):
     status: int
     result: List[ItemResult]
-
-# Lecture Presentation Models
-class LectureTopicRequest(BaseModel):
-    topic: str
-    duration_minutes: Optional[int] = 10
-    difficulty_level: Optional[str] = "beginner"  # beginner, intermediate, advanced
-    target_audience: Optional[str] = "general"
-
-class SlideInstruction(BaseModel):
-    slide_number: int
-    title: str
-    content: str
-    image_prompt: str
-    slide_type: str  # title, content, conclusion, etc.
-    script: str  # Lecture script content for this specific slide
-
-class LectureResponse(BaseModel):
-    status: int
-    topic: str
-    duration_minutes: int
-    slides: List[SlideInstruction]
-    total_slides: int
-
-class QwenRequest(BaseModel):
-    model: str = "qwen3-max-preview"
-    messages: List[dict]
-    stream: bool = False
 
 class TextAndAvatarGeneration(BaseModel):
     text: str

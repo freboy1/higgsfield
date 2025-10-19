@@ -32,19 +32,31 @@ def generate_lecture(request: LectureTopicRequest):
             topic=request.topic,
             duration_minutes=request.duration_minutes,
             difficulty_level=request.difficulty_level,
-            target_audience=request.target_audience
+            target_audience=request.target_audience,
+            tone=request.tone,
+            add_ons=request.add_ons.dict() if request.add_ons else {}
         )
         
         # Convert the response to our slide format
         slides = []
         for slide_data in lecture_data.get("slides", []):
+            # Handle content field - convert list to string if needed
+            content = slide_data.get("content", "")
+            
+            if isinstance(content, list):
+                content = "\n".join(str(item) for item in content)
+            elif not isinstance(content, str):
+                content = str(content)
+            
             slide = SlideInstruction(
                 slide_number=slide_data.get("slide_number", 1),
                 title=slide_data.get("title", ""),
-                content=slide_data.get("content", ""),
+                content=content,
                 image_prompt=slide_data.get("image_prompt", ""),
                 slide_type=slide_data.get("slide_type", "content"),
-                script=slide_data.get("script", "")
+                script=slide_data.get("script", ""),
+                code_example=slide_data.get("code_example"),
+                exercise=slide_data.get("exercise")
             )
             slides.append(slide)
         
@@ -52,6 +64,7 @@ def generate_lecture(request: LectureTopicRequest):
             status=1,
             topic=request.topic,
             duration_minutes=request.duration_minutes,
+            tone=request.tone,
             slides=slides,
             total_slides=len(slides)
         )
