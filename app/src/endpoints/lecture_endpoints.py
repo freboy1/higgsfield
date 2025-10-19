@@ -61,7 +61,7 @@ def generate_lecture(request: LectureTopicRequest):
             )
             slides.append(slide)
         
-        # ← NEW: Generate human-readable markdown format
+        # Generate human-readable markdown format
         markdown_formatter = LectureMarkdownFormatter()
         markdown_content = markdown_formatter.format_lecture_to_markdown(
             topic=request.topic,
@@ -77,7 +77,7 @@ def generate_lecture(request: LectureTopicRequest):
             tone=request.tone,
             slides=slides,
             total_slides=len(slides),
-            markdown_content=markdown_content  # ← NEW FIELD
+            markdown_content=markdown_content  # NEW FIELD
         )
         
     except Exception as e:
