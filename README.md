@@ -62,7 +62,8 @@ DASHSCOPE_API_KEY=your_dashscope_api_key_here
 
 #### Higgsfield API
 1. Go to https://cloud.higgsfield.ai/promocode
-2. Create API key at https://cloud.higgsfield.ai/api-keys
+2. Sign in and apply your $100 coupon
+3. Create API key at https://cloud.higgsfield.ai/api-keys
 
 #### Qwen API (DashScope)
 1. Sign up at https://dashscope.aliyun.com/
