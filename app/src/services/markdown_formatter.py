@@ -4,7 +4,8 @@ Converts lecture slides into human-readable markdown format
 """
 
 from typing import List, Dict, Any
-
+import re
+from app.src.models.model import Slide
 class LectureMarkdownFormatter:
     """
     Service to format lecture content into human-readable markdown
@@ -205,3 +206,83 @@ class LectureMarkdownFormatter:
         
         # Limit to top 5 points
         return key_points[:5]
+    
+    @staticmethod
+    def _parse_qa(section_text: str) -> List[Dict[str, str]]:
+        qa_pairs = []
+        question = None
+        answer = None
+
+        for line in section_text.splitlines():
+            line = line.strip()
+            if line.lower().startswith(("q:", "question:")):
+                question = line.split(":", 1)[1].strip()
+            elif line.lower().startswith(("a:", "answer:")):
+                answer = line.split(":", 1)[1].strip()
+                if question:
+                    qa_pairs.append({"question": question, "answer": answer})
+                    question, answer = None, None
+        return qa_pairs
+    
+    @staticmethod
+    def parse_markdown_to_slides(markdown_text: str) -> List[Dict[str, Any]]:
+        """
+        Parse markdown lecture text and reconstruct slides
+        (supports Key takeaway, Script, Image sections)
+        """
+        slides = []
+
+        # Extract main topic
+        topic_match = re.search(r"^# (.+)", markdown_text, flags=re.MULTILINE)
+        topic = topic_match.group(1).strip() if topic_match else "Untitled Lecture"
+
+        # Split sections by "##"
+        raw_sections = re.split(r"^## ", markdown_text, flags=re.MULTILINE)
+        raw_sections = [s.strip() for s in raw_sections if s.strip() and not s.startswith("# ")]
+
+        slide_counter = 1
+
+        for section in raw_sections:
+            lines = section.splitlines()
+            if not lines:
+                continue
+
+            section_title = lines[0].strip()
+            section_body = "\n".join(lines[1:]).strip()
+
+            # Extract optional fields
+            script_match = re.search(r"\*\*Script\*\*:\s*(.+?)(?:\n\n|\Z)", section_body, flags=re.DOTALL)
+            image_match = re.search(r"\*\*Image\*\*:\s*(.+?)(?:\n\n|\Z)", section_body, flags=re.DOTALL)
+            takeaway_match = re.search(r"Key takeaway:\s*(.+)", section_body)
+
+            script = script_match.group(1).strip() if script_match else None
+            image_prompt = image_match.group(1).strip() if image_match else None
+            takeaway = takeaway_match.group(1).strip() if takeaway_match else None
+
+            # Remove extracted fields from main body
+            clean_body = re.sub(r"\*\*Script\*\*:.+?(?:\n\n|\Z)", "", section_body, flags=re.DOTALL)
+            clean_body = re.sub(r"\*\*Image\*\*:.+?(?:\n\n|\Z)", "", clean_body, flags=re.DOTALL)
+            clean_body = re.sub(r"Key takeaway:.+", "", clean_body, flags=re.DOTALL).strip()
+
+            # Identify slide type
+            slide_type = "content"
+            if section_title.lower().startswith("introduction"):
+                slide_type = "title"
+            elif section_title.lower().startswith(("summary", "you did it")):
+                slide_type = "summary"
+            elif section_title.lower().startswith(("key findings", "conclusion")):
+                slide_type = "conclusion"
+
+            # Create slide
+            slide = {
+                "slide_number": slide_counter,
+                "title": section_title,
+                "content": clean_body,
+                "image_prompt": image_prompt,
+                "slide_type": slide_type,
+                "script": script or takeaway or None
+            }
+            slides.append(slide)
+            slide_counter += 1
+
+        return slides
