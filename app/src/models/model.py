@@ -46,3 +46,8 @@ class QwenRequest(BaseModel):
 class TextAndAvatarGeneration(BaseModel):
     text: str
     avatar: str
+
+class GenerateTextFromRequest(BaseModel):
+    text: str
+    tone: str
+    target: str
