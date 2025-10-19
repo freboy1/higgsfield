@@ -34,6 +34,7 @@ class LectureResponse(BaseModel):
     tone: str
     slides: List[SlideInstruction]
     total_slides: int
+    markdown_content: Optional[str] = None  # ← NEW FIELD ADDED
 
 # Existing models
 class TextForGenerationPrompt(BaseModel):

@@ -6,6 +6,7 @@ from app.src.models.model import (
     GeneratedTextResponse
 )
 from app.src.services.qwen_service import QwenService
+from app.src.services.markdown_formatter import LectureMarkdownFormatter  # ← NEW IMPORT
 from typing import List
 import os
 
@@ -60,13 +61,23 @@ def generate_lecture(request: LectureTopicRequest):
             )
             slides.append(slide)
         
+        # ← NEW: Generate human-readable markdown format
+        markdown_formatter = LectureMarkdownFormatter()
+        markdown_content = markdown_formatter.format_lecture_to_markdown(
+            topic=request.topic,
+            slides=slides,
+            tone=request.tone,
+            difficulty_level=request.difficulty_level
+        )
+        
         return LectureResponse(
             status=1,
             topic=request.topic,
             duration_minutes=request.duration_minutes,
             tone=request.tone,
             slides=slides,
-            total_slides=len(slides)
+            total_slides=len(slides),
+            markdown_content=markdown_content  # ← NEW FIELD
         )
         
     except Exception as e:
